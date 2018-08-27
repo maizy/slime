@@ -1,0 +1,5 @@
+include 'slime'
+include 'slime-jline3'
+include 'slime-test-spec'
+include 'slime-test-app'
+include 'slime-jline3-test-app'
