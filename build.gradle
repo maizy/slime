@@ -118,14 +118,14 @@ def applyAppOptions = { Project p, String mainClass ->
 }
 
 project('slime-test-app') {
-  applyAppOptions(it, 'space.maizy.slime.jline3test.SlimeTestApp')
+  applyAppOptions(it, 'space.maizy.slime.test.app.SlimeTestApp')
   dependencies {
     compile project(':slime-test-spec')
   }
 }
 
 project('slime-jline3-test-app') {
-  applyAppOptions(it, 'space.maizy.slime.jline3test.SlimeTestApp')
+  applyAppOptions(it, 'space.maizy.slime.test.jline.SlimeJline3TestApp')
   dependencies {
     compile project(':slime-test-spec')
     compile project(':slime-jline3')
