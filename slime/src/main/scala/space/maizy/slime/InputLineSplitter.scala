@@ -18,6 +18,11 @@ object InputLineSplitter {
     val position = inputLine.cursorPosition
     val cursor = if (position > fromIndex && position <= toIndex) {
       Some(position - fromIndex)
+
+    // position could be Some(0) only at the begin of the line
+    } else if (position == 0 && fromIndex == 0) {
+      Some(0)
+
     } else {
       None
     }
@@ -44,13 +49,6 @@ object InputLineSplitter {
     divMatches match {
       case splitMatch :: tail =>
 
-        // if string not start with divider, add empty init divider
-        val initDiv = if (argFromIndex == 0 && splitMatch.start != 0) {
-          List(buildDiv(inputLine, 0, 0))
-        } else {
-          List()
-        }
-
         val arg = if (splitMatch.start != 0) {
           List(buildArg(inputLine, argFromIndex, splitMatch.start))
         } else {
@@ -63,7 +61,7 @@ object InputLineSplitter {
           inputLine,
           tail,
           argFromIndex = splitMatch.end,
-          acc = (div :: (arg ++ initDiv)) ++ acc
+          acc = (div :: arg) ++ acc
         )
 
       case List() =>

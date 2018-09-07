@@ -9,6 +9,8 @@ import cats.data.NonEmptyList
 
 class InputLineSplitterSpec extends BaseSpec {
 
+  private val whitespaceSplitter = NonEmptyList.one("\\s+".r)
+
   "InputLineSplitter" should "split line args" in {
     val testString = "cmd   --opt \n opt2||opt3"
     val inputLine = InputLine(testString, testString.length)
@@ -21,7 +23,6 @@ class InputLineSplitterSpec extends BaseSpec {
 
     val expected = Input(
       NonEmptyList.of(
-        InputDivider(""),
         InputArg("cmd"),
         InputDivider("   "),
         InputArg("--opt"),
@@ -37,40 +38,128 @@ class InputLineSplitterSpec extends BaseSpec {
   }
 
   it should "detect non empty divider at the begin of the line" in {
-    fail("todo")
+    InputLineSplitter.split(InputLine("  arg arg2", 1), whitespaceSplitter) shouldBe Input(
+      NonEmptyList.of(
+        InputDivider("  ", Some(1)),
+        InputArg("arg"),
+        InputDivider(" "),
+        InputArg("arg2")
+      )
+    )
   }
 
   it should "detect cursor position" in {
-    fail("todo")
+    InputLineSplitter.split(InputLine("arg arg2", 6), whitespaceSplitter) shouldBe Input(
+      NonEmptyList.of(
+        InputArg("arg"),
+        InputDivider(" "),
+        InputArg("arg2", Some(2))
+      )
+    )
   }
 
   it should "detect cursor position when it inside divider" in {
-    fail("todo")
+    InputLineSplitter.split(InputLine("arg  arg2", 4), whitespaceSplitter) shouldBe Input(
+      NonEmptyList.of(
+        InputArg("arg"),
+        InputDivider("  ", Some(1)),
+        InputArg("arg2")
+      )
+    )
+
+    InputLineSplitter.split(InputLine("arg arg2", 4), whitespaceSplitter) shouldBe Input(
+      NonEmptyList.of(
+        InputArg("arg"),
+        InputDivider(" ", Some(1)),
+        InputArg("arg2")
+      )
+    )
   }
 
   it should "detect cursor position when it inside argument" in {
-    fail("todo")
+    InputLineSplitter.split(InputLine("arg arg2", 5), whitespaceSplitter) shouldBe Input(
+      NonEmptyList.of(
+        InputArg("arg"),
+        InputDivider(" "),
+        InputArg("arg2", Some(1))
+      )
+    )
+
+    InputLineSplitter.split(InputLine("arg arg2", 3), whitespaceSplitter) shouldBe Input(
+      NonEmptyList.of(
+        InputArg("arg", Some(3)),
+        InputDivider(" "),
+        InputArg("arg2")
+      )
+    )
   }
 
   it should "detect cursor position when it at the begin of the line starts with divider" in {
-    fail("todo")
+    InputLineSplitter.split(InputLine(" arg", 0), whitespaceSplitter) shouldBe Input(
+      NonEmptyList.of(
+        InputDivider(" ", Some(0)),
+        InputArg("arg")
+      )
+    )
   }
 
   it should "detect cursor position when it at the begin of the line starts with argument" in {
-    fail("todo")
+    InputLineSplitter.split(InputLine("arg arg2", 0), whitespaceSplitter) shouldBe Input(
+      NonEmptyList.of(
+        InputArg("arg", Some(0)),
+        InputDivider(" "),
+        InputArg("arg2")
+      )
+    )
   }
 
   it should "detect cursor position when it at the end of the line ends with divider" in {
-    fail("todo")
+    InputLineSplitter.split(InputLine("arg arg2   ", 10), whitespaceSplitter) shouldBe Input(
+      NonEmptyList.of(
+        InputArg("arg"),
+        InputDivider(" "),
+        InputArg("arg2"),
+        InputDivider("   ", Some(2))
+      )
+    )
   }
 
   it should "detect cursor position when it at the end of the line ends with argument" in {
-    fail("todo")
+    InputLineSplitter.split(InputLine("arg arg2", 8), whitespaceSplitter) shouldBe Input(
+      NonEmptyList.of(
+        InputArg("arg"),
+        InputDivider(" "),
+        InputArg("arg2", Some(4))
+      )
+    )
   }
 
   it should "split empty line" in {
-    fail("todo")
+    InputLineSplitter.split(InputLine("", 0), whitespaceSplitter) shouldBe Input(
+      NonEmptyList.one(
+        InputDivider("", Some(0))
+      )
+    )
   }
 
+  it should "split line with one argument" in {
+    InputLineSplitter.split(InputLine("arg", 3), whitespaceSplitter) shouldBe Input(
+      NonEmptyList.one(
+        InputArg("arg", Some(3))
+      )
+    )
+
+    InputLineSplitter.split(InputLine("arg", 0), whitespaceSplitter) shouldBe Input(
+      NonEmptyList.one(
+        InputArg("arg", Some(0))
+      )
+    )
+
+    InputLineSplitter.split(InputLine("arg", 1), whitespaceSplitter) shouldBe Input(
+      NonEmptyList.one(
+        InputArg("arg", Some(1))
+      )
+    )
+  }
 
 }
