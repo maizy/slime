@@ -19,16 +19,25 @@ class InputLineSplitterSpec extends BaseSpec {
     )
     val real = InputLineSplitter.split(inputLine, splitters)
 
-    val expected = InputArgs(
-      List(
+    val expected = Input(
+      NonEmptyList.of(
+        InputDivider(""),
         InputArg("cmd"),
+        InputDivider("   "),
         InputArg("--opt"),
+        InputDivider(" \n "),
         InputArg("opt2"),
+        InputDivider("|"),
         InputArg(""),  // because "|" matches exactly one char
-        InputArg("opt3")
+        InputDivider("|"),
+        InputArg("opt3", Some(4))
       )
     )
     real shouldBe expected
+  }
+
+  it should "detect non empty divider at the begin of the line" in {
+    fail("todo")
   }
 
   it should "detect cursor position" in {
@@ -39,20 +48,29 @@ class InputLineSplitterSpec extends BaseSpec {
     fail("todo")
   }
 
-  it should "detect cursor position when it at the begin of the line" in {
+  it should "detect cursor position when it inside argument" in {
     fail("todo")
   }
 
-  it should "detect cursor position when it at the end of the line" in {
+  it should "detect cursor position when it at the begin of the line starts with divider" in {
     fail("todo")
   }
 
-  it should "detect cursor position when it at the begin of the line preceded by divider" in {
+  it should "detect cursor position when it at the begin of the line starts with argument" in {
     fail("todo")
   }
 
-  it should "detect cursor position when it at the end of the line followed by divider" in {
+  it should "detect cursor position when it at the end of the line ends with divider" in {
     fail("todo")
   }
+
+  it should "detect cursor position when it at the end of the line ends with argument" in {
+    fail("todo")
+  }
+
+  it should "split empty line" in {
+    fail("todo")
+  }
+
 
 }

@@ -7,10 +7,10 @@ package space.maizy.slime.completer
 
 import scala.util.matching.Regex
 import cats.data.NonEmptyList
-import space.maizy.slime.{ Candidate, InputLine, InputArgs, InputLineSplitter }
+import space.maizy.slime.{ Candidate, InputLine, Input, InputLineSplitter }
 
 class RuleCompleter(splitRegexps: NonEmptyList[Regex] = NonEmptyList.one("\\s+".r)) extends Completer {
-  override def splitLine(line: InputLine): InputArgs =
+  override def splitLine(line: InputLine): Input =
     InputLineSplitter.split(line, splitRegexps)
 
   override def generateCandidates(currentInput: InputLine): List[Candidate] = ???
