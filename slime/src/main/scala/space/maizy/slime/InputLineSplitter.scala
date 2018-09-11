@@ -65,7 +65,7 @@ object InputLineSplitter {
         )
 
       case List() =>
-        // if string not end with divider)
+        // if string not end with divider
         if (argFromIndex != inputLine.length) {
           buildArg(inputLine, argFromIndex, inputLine.length) :: acc
         } else {

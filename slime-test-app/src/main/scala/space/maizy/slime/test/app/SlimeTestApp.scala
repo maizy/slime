@@ -34,8 +34,8 @@ object SlimeTestApp {
     input.inputParts.map { arg =>
       val posText = arg.cursorPosition.map(p => s" (active, cursor @$p)").getOrElse("")
       (arg match {
-        case InputArg(value, _) => "Arg: "
-        case InputDivider(value, _) => "Div: "
+        case _: InputArg => "Arg: "
+        case _: InputDivider => "Div: "
       }) + s"'${arg.value}'$posText"
     }
   }

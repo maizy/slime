@@ -1,11 +1,11 @@
 package space.maizy.slime
 
-import cats.data.NonEmptyList
-
 /**
  * Copyright (c) Nikita Kovaliov, maizy.ru, 2018
  * See LICENSE.txt for details.
  */
+
+import cats.data.NonEmptyList
 
 class InputLineSplitterSpec extends BaseSpec {
 
