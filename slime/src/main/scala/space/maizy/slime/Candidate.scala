@@ -6,12 +6,16 @@ package space.maizy.slime
  */
 
 /**
- * @param value value to insert, should not contain ANSI sequences
+ * @param value values to insert, should not contain ANSI sequences
  * @param complete if selected value is a complete, separator will be added after it
  * @param description optional description, may contains ANSI sequences
  * @param _displayedValue optional displayed value, may contains ANSI sequences
+ *
+ * TODO: how to encode step skipping?
+ * TODO: how to link matched rule with its value? Are we need it?
  */
 final case class Candidate(
+    init: List[String],
     value: String,
     _displayedValue: Option[String] = None,
     complete: Boolean = true,
