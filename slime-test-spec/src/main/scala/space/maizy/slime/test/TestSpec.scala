@@ -15,9 +15,9 @@ object TestSpec {
     override def generateCandidates(currentInput: InputLine): List[Candidate] = {
       val tail = List("status", "--type")
       List(
-        Candidate(tail, "A"),
+        Candidate(tail, "A", complete = false),
         Candidate(tail :+ "B", "C"),
-        Candidate(tail, "D")
+        Candidate(tail, "D", complete = false)
       )
     }
 

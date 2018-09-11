@@ -67,7 +67,7 @@ object SlimeTestApp {
 
     val candidateLines = candidatesLinesAndFlag.map(_._2)
     if (anyComplete) {
-      candidateLines ::: NonEmptyList.one("! - indicate that values is a complete")
+      candidateLines ::: NonEmptyList.one("! - indicate that candidate is a complete (divider will be added after)")
     } else {
       candidateLines
     }
