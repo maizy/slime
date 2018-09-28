@@ -6,15 +6,25 @@ package space.maizy.slime.test.app
  */
 
 import cats.data.NonEmptyList
-import space.maizy.slime.{ Candidate, Input, InputArg, InputDivider, InputLine }
 import space.maizy.slime.completer.Completer
 import space.maizy.slime.test.TestSpec
+import space.maizy.slime.{ Candidate, CandidateChain, Input, InputArg, InputDivider, InputLine, MatchedValue }
 
+/**
+ * TODO: add ansi colors
+ */
 object SlimeTestApp {
 
   final private val LINE_SIZE = 100
+  final private val COMPLETE_MARK = "!"
 
   private val separator: NonEmptyList[String] = NonEmptyList.one("-" * LINE_SIZE)
+
+  private def describeMatchedValue(value: MatchedValue): String = describeMatchedValue(value.value)
+  private def describeMatchedValue(value: String): String = s"[$value]"
+
+  private def describeCandidate(value: Candidate): String = describeCandidate(value.value)
+  private def describeCandidate(value: String): String = s"{$value}"
 
   private def describeCompleter(completer: Completer): NonEmptyList[String] = {
     // TODO: describe rules
@@ -40,37 +50,43 @@ object SlimeTestApp {
     }
   }
 
-  private def describeCandidates(candidates: List[Candidate]): NonEmptyList[String] = {
+  private def describeCandidateChainElement(element: CandidateChain.Element): List[String] = element match {
+    case Left(value: MatchedValue) => List(describeMatchedValue(value))
+    case Right(candidateList: List[Candidate]) => candidateList.map { candidate =>
+      val complete = if (candidate.complete) COMPLETE_MARK else ""
+      s"${describeCandidate(candidate)}$complete"
+    }
+  }
 
-    val initMax = candidates.map(_.init.mkString(" ").length).max
-    val initPad = if (initMax == 0) 0 else initMax + 1
-    val candidatesDescription = candidates.map {candidate =>
-      val init = (if (candidate.init.isEmpty) {
-        ""
-      } else {
-        candidate.init.mkString(" ") + " "
-      }).padTo(initPad, ' ')
-      val value = if (candidate.value != candidate.displayedValue) {
-        s" (value: ${candidate.value})"
-      } else {
-        ""
+  private def describeCandidatesChains(candidatesChain: List[CandidateChain]): NonEmptyList[String] = {
+
+    val candidatesChainsDescriptionLines: List[String] = candidatesChain
+      .zipWithIndex
+      .flatMap { case (candidateChain, index) =>
+        val elementsDescription = candidateChain.elements
+          .map(describeCandidateChainElement)
+          .foldLeft((List.empty[String], 0)) {
+            case ((acc, shift), candidateValues) =>
+              val pad = " " * shift
+              val maxLen = candidateValues.map(_.length).max
+              (
+                acc ::: candidateValues.map { value =>
+                  s"$pad $value"
+                },
+                shift + maxLen + 1
+              )
+          }._1
+        List(s"---- chain ${index + 1} ----") ::: elementsDescription
       }
-      val complete = if (candidate.complete) " !" else ""
-      val description = candidate.description.map(d => s"\t$d").getOrElse("")
-      (candidate.complete, s"$init→ '${candidate.displayedValue}'$value$complete$description")
-    }
-    val candidatesLinesAndFlag = NonEmptyList
-      .fromList(candidatesDescription)
-      .getOrElse(NonEmptyList.one((false, "<empty>")))
-
-    val anyComplete = candidatesLinesAndFlag.foldLeft(false)((acc, i) => acc || i._1)
-
-    val candidateLines = candidatesLinesAndFlag.map(_._2)
-    if (anyComplete) {
-      candidateLines ::: NonEmptyList.one("! - indicate that candidate is a complete (divider will be added after)")
-    } else {
-      candidateLines
-    }
+    NonEmptyList
+      .fromList(candidatesChainsDescriptionLines)
+      .getOrElse(NonEmptyList.one("<empty>")
+      ) ::: NonEmptyList.of(
+      "",
+      s"$COMPLETE_MARK - indicate that candidate is a complete (divider will be added after)",
+      s"${describeMatchedValue("matched_value")} - matched value",
+      s"${describeCandidate("candidate")} - generated candidates"
+    )
   }
 
   private def title(text: String): NonEmptyList[String] = {
@@ -99,14 +115,14 @@ object SlimeTestApp {
     val inputLine = InputLine(inputText, cursorPosition)
     val input = spec.splitLine(inputLine)
 
-    val candidates = spec.generateCandidates(inputLine)
+    val candidates = spec.generateCandidatesChains(inputLine)
 
     val emptyLine = NonEmptyList.one("")
 
     val output = title("Completer") ::: describeCompleter(spec) ::: emptyLine :::
       title("Input Line") ::: describeInputLine(inputLine) ::: emptyLine :::
       title("Parsed Input") ::: describeInput(input) ::: emptyLine :::
-      title("Candidates") ::: describeCandidates(candidates)
+      title("Candidates") ::: describeCandidatesChains(candidates)
 
     output.toList.foreach(println)
   }

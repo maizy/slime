@@ -15,7 +15,6 @@ package space.maizy.slime
  * TODO: how to link matched rule with its value? Are we need it?
  */
 final case class Candidate(
-    init: List[String],
     value: String,
     _displayedValue: Option[String] = None,
     complete: Boolean = true,
@@ -24,3 +23,6 @@ final case class Candidate(
   val displayedValue: String = _displayedValue.getOrElse(value)
 }
 
+object Candidate {
+  def apply(value: String): Candidate = new Candidate(value)
+}

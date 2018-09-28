@@ -5,10 +5,10 @@ package space.maizy.slime.completer
  * See LICENSE.txt for details.
  */
 
-import space.maizy.slime.{ Candidate, InputLine, Input }
+import space.maizy.slime.{ CandidateChain, Input, InputLine }
 
 trait Completer {
   def splitLine(line: InputLine): Input
-  def generateCandidates(currentInput: InputLine): List[Candidate]
-  def selectCandidate(currentInput: InputLine, candidate: Candidate): InputLine
+  def generateCandidatesChains(currentInput: InputLine): List[CandidateChain]
+  def selectCandidateChain(currentInput: InputLine, candidateChain: CandidateChain): InputLine
 }
