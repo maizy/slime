@@ -7,11 +7,12 @@ package space.maizy.slime.completer
 
 import scala.util.matching.Regex
 import cats.data.NonEmptyList
-import space.maizy.slime.{ CandidateChain, CandidateGeneratorsTree, Input, InputLine, InputLineSplitter }
+import space.maizy.slime.candidate_generator_tree.CandidateGeneratorTree
+import space.maizy.slime.{ CandidateChain, Input, InputLine, InputLineSplitter }
 
 
 class TreeCompleter(
-    candidatesTree: CandidateGeneratorsTree,
+    candidatesTree: CandidateGeneratorTree.Type,
     splitRegexps: NonEmptyList[Regex] = NonEmptyList.one("\\s+".r))
   extends Completer {
 

@@ -5,13 +5,16 @@ package space.maizy.slime.test
  * See LICENSE.txt for details.
  */
 
+import space.maizy.slime.candidate_generator_tree.CandidateGeneratorTree
 import space.maizy.slime.completer.{ Completer, TreeCompleter }
-import space.maizy.slime.{ Candidate, CandidateChain, EmptyTree, InputLine }
+import space.maizy.slime.contrib.candidate_generator.FixedList
+import space.maizy.slime.{ Candidate, CandidateChain, InputLine }
+
 
 object TestSpec {
 
   // FIXME: temp
-  val fakeCompleter: Completer = new TreeCompleter(EmptyTree) {
+  val fakeCompleter: Completer = new TreeCompleter(CandidateGeneratorTree.leaf(FixedList("Fake", "Leaf"))) {
     override def generateCandidatesChains(currentInput: InputLine): List[CandidateChain] = {
       val chainOne = CandidateChain(
         CandidateChain.matchedValue("status"),
