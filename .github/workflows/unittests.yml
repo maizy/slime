@@ -1,0 +1,21 @@
+name: unit tests
+
+on:
+  push:
+  schedule:
+    - cron:  '0 10 */7 * *'
+
+jobs:
+  build:
+    runs-on: 'ubuntu-latest'
+    steps:
+    - uses: actions/checkout@v1
+    - name: use gradle+scala container
+      uses: maizy/actions-setup-gradle-scala@v1
+      with:
+        GRADLE_LAUNCHER_VERSION: '4.10.3'
+        SCALA_VERSION: '2.12.10'
+    - name: run unittests
+      run: ./gradlew test -x scalaStyle
+    - name: check scala style
+      run: ./gradlew scalaStyle
