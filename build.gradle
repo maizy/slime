@@ -17,7 +17,7 @@ plugins {
 
 ext {
   scalaMajorVersion = '2.12'
-  scalaMinorVersion = '6'
+  scalaMinorVersion = '10'
   scalaVersion = "${scalaMajorVersion}.${scalaMinorVersion}"
   catsVersion = '1.1.0'
   jLineVersion = '3.8.0'
@@ -27,8 +27,8 @@ group = 'space.maizy'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
 
-task wrapper(type: Wrapper) {
-  gradleVersion = '4.7'
+wrapper {
+  gradleVersion = '4.10.3'
   distributionType = 'all'
 }
 
